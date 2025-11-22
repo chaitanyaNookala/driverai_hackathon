@@ -4,9 +4,17 @@ import './Scanner.css';
 
 function Scanner({ user }) {
     const navigate = useNavigate();
+
+    // Existing barcode scanner states
     const [barcode, setBarcode] = useState('');
     const [scanning, setScanning] = useState(false);
 
+    // NEW AI scanner states
+    const [analysis, setAnalysis] = useState("");
+    const [loading, setLoading] = useState(false);
+    const [error, setError] = useState("");
+
+    // ===== Barcode manual entry =====
     const handleManualEntry = (e) => {
         e.preventDefault();
         if (barcode.trim()) {
@@ -15,12 +23,47 @@ function Scanner({ user }) {
     };
 
     const handleQuickTest = () => {
-        // Test barcode for Coca-Cola (works with OpenFoodFacts)
         navigate('/product/5449000000996');
     };
 
+    // ===== AI image scanner upload =====
+    const handleImageUpload = async (event) => {
+        const file = event.target.files[0];
+        if (!file) return;
+
+        setLoading(true);
+        setError("");
+        setAnalysis("");
+
+        try {
+            const formData = new FormData();
+            formData.append("image", file); // must match multer field
+
+            const res = await fetch("http://localhost:5000/api/take-picture", {
+                method: "POST",
+                body: formData,
+            });
+
+            const data = await res.json();
+
+            if (res.ok) {
+                setAnalysis(data.analysis || "No analysis returned.");
+            } else {
+                setError(data.error || "Backend error.");
+            }
+        } catch (err) {
+            console.error(err);
+            setError("Failed to send image to backend.");
+        }
+
+        setLoading(false);
+    };
+    console.log("Scanner page loaded!");
+
     return (
         <div className="scanner-container">
+
+            {/* ===== Top Navigation ===== */}
             <nav className="scanner-nav">
                 <button onClick={() => navigate('/dashboard')} className="btn-back">
                     ← Back to Dashboard
@@ -29,14 +72,35 @@ function Scanner({ user }) {
             </nav>
 
             <div className="scanner-content">
+
+                {/* ===== AI CAMERA SCANNER SECTION ===== */}
                 <div className="scanner-box">
                     <div className="camera-placeholder">
-                        <div className="camera-icon">📷</div>
-                        <p>Camera Scanner Coming Soon</p>
-                        <small>For now, enter barcode manually below</small>
+                        <h3>AI Product Scanner (Photo)</h3>
+
+                        <input
+                            type="file"
+                            accept="image/*"
+                            capture="environment"
+                            onChange={handleImageUpload}
+                            className="camera-input"
+                        />
+
+                        {loading && <p>Processing image… please wait.</p>}
+                        {error && <p style={{ color: "red" }}>{error}</p>}
+
+                        {analysis && (
+                            <div className="analysis-box">
+                                <h3>AI Analysis</h3>
+                                <pre style={{ whiteSpace: "pre-wrap" }}>
+                                    {analysis}
+                                </pre>
+                            </div>
+                        )}
                     </div>
                 </div>
 
+                {/* ===== Manual Barcode Entry ===== */}
                 <div className="manual-entry">
                     <h3>Enter Barcode Manually</h3>
                     <form onSubmit={handleManualEntry}>
@@ -60,6 +124,7 @@ function Scanner({ user }) {
                     </div>
                 </div>
 
+                {/* ===== Scanning Tips ===== */}
                 <div className="scanner-tips">
                     <h4>Scanning Tips:</h4>
                     <ul>

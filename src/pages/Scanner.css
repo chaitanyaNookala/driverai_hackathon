@@ -62,12 +62,12 @@
 
 .camera-placeholder p {
     font-size: 18px;
-    color: #666;
+    color: black;
     margin: 0 0 10px 0;
 }
 
 .camera-placeholder small {
-    color: #999;
+    color: black;
 }
 
 .manual-entry {
@@ -80,7 +80,7 @@
 
 .manual-entry h3 {
     margin: 0 0 20px 0;
-    color: #333;
+    color: black;
 }
 
 .manual-entry form {
@@ -109,7 +109,7 @@
 }
 
 .quick-test p {
-    color: #666;
+    color: black;
     margin: 0 0 10px 0;
 }
 
@@ -138,17 +138,43 @@
 
 .scanner-tips h4 {
     margin: 0 0 15px 0;
-    color: #333;
+    color: black;
 }
 
 .scanner-tips ul {
     margin: 0;
     padding-left: 20px;
-    color: #666;
+    color: black;
 }
 
 .scanner-tips li {
     margin-bottom: 8px;
+}
+
+/* ==== AI Analysis Output Styling ==== */
+.analysis-box {
+    margin-top: 25px;
+    padding: 25px;
+    background: #ffffff;
+    border-radius: 10px;
+    box-shadow: 0 1px 5px rgba(0, 0, 0, 0.1);
+    color: #222 !important;
+    text-align: left;
+}
+
+.analysis-box pre {
+    font-size: 16px;
+    color: #222 !important;
+    background: transparent;
+    white-space: pre-wrap;
+    line-height: 1.6;
+}
+
+.analysis-box h3 {
+    color: #111 !important;
+    margin-bottom: 15px;
+    font-size: 20px;
+    font-weight: 600;
 }
 
 @media (max-width: 768px) {
