@@ -13,6 +13,7 @@ function ProductDetail({ user }) {
     const [translating, setTranslating] = useState(false);
     const [translatedIngredients, setTranslatedIngredients] = useState('');
     const [allergyWarning, setAllergyWarning] = useState(false);
+    const [allergyMatches, setAllergyMatches] = useState([]);
 
     useEffect(() => {
         fetchProduct();
@@ -25,13 +26,22 @@ function ProductDetail({ user }) {
             const data = await getProductByBarcode(barcode);
             setProduct(data);
 
-            // Check for allergies
+            // Check for allergies - enhanced version
             if (user?.allergies && user.allergies.length > 0) {
-                const hasAllergen = user.allergies.some(allergy =>
-                    data.ingredients?.toLowerCase().includes(allergy.toLowerCase()) ||
-                    data.allergens.some(a => a.includes(allergy.toLowerCase()))
-                );
-                setAllergyWarning(hasAllergen);
+                const matches = [];
+                user.allergies.forEach(allergy => {
+                    const allergyLower = allergy.toLowerCase();
+                    if (data.ingredients?.toLowerCase().includes(allergyLower)) {
+                        matches.push(allergy);
+                    }
+                    if (data.allergens?.some(a => a.toLowerCase().includes(allergyLower))) {
+                        if (!matches.includes(allergy)) {
+                            matches.push(allergy);
+                        }
+                    }
+                });
+                setAllergyMatches(matches);
+                setAllergyWarning(matches.length > 0);
             }
 
             // Fetch similar products
@@ -61,7 +71,13 @@ function ProductDetail({ user }) {
     if (loading) {
         return (
             <div className="product-container">
-                <div className="loading">Loading product...</div>
+                <button className="btn-back" onClick={() => navigate('/scanner')}>
+                    ← Back to Scanner
+                </button>
+                <div className="loading-state glass-card">
+                    <div className="loader"></div>
+                    <p>Loading product details...</p>
+                </div>
             </div>
         );
     }
@@ -69,10 +85,18 @@ function ProductDetail({ user }) {
     if (error) {
         return (
             <div className="product-container">
-                <div className="error-box">
-                    <h2>❌ {error}</h2>
-                    <button onClick={() => navigate('/scanner')} className="btn-primary">
-                        Try Another Product
+                <button className="btn-back" onClick={() => navigate('/scanner')}>
+                    ← Back to Scanner
+                </button>
+                <div className="error-state glass-card">
+                    <div className="error-icon">⚠️</div>
+                    <h2>Product Not Found</h2>
+                    <p>{error}</p>
+                    <button
+                        className="btn btn-primary"
+                        onClick={() => navigate('/scanner')}
+                    >
+                        Try Another Barcode
                     </button>
                 </div>
             </div>
@@ -81,117 +105,235 @@ function ProductDetail({ user }) {
 
     return (
         <div className="product-container">
-            <nav className="product-nav">
-                <button onClick={() => navigate('/scanner')} className="btn-back">
-                    ← Back to Scanner
-                </button>
-                <h2>Product Details</h2>
-            </nav>
+            {/* Back Button */}
+            <button className="btn-back" onClick={() => navigate('/scanner')}>
+                ← Back to Scanner
+            </button>
 
-            {allergyWarning && (
-                <div className="allergy-alert">
-                    ⚠️ <strong>ALLERGY WARNING:</strong> This product may contain ingredients you're allergic to!
-                </div>
-            )}
-
+            {/* Main Content */}
             <div className="product-content">
-                <div className="product-header">
-                    {product.image && (
-                        <img src={product.image} alt={product.name} className="product-image" />
-                    )}
-                    <div className="product-title-section">
-                        <h1>{product.name}</h1>
-                        <p className="brand">{product.brand}</p>
-                        <p className="barcode">Barcode: {product.barcode}</p>
+                {/* Left Column - Product Info */}
+                <div className="product-main">
+                    {/* Product Header Card */}
+                    <div className="product-card glass-card">
+                        <div className="product-header">
+                            {product?.image && (
+                                <img
+                                    src={product.image}
+                                    alt={product.name}
+                                    className="product-image"
+                                />
+                            )}
+                            <div className="product-name-section">
+                                <h1 className="product-name">{product?.name || 'Unknown Product'}</h1>
+                                <p className="product-brand">{product?.brand || 'Unknown Brand'}</p>
+                                <div className="product-meta">
+                                    <span className="meta-item">📦 Code: {product?.barcode}</span>
+                                    {product?.categories && (
+                                        <span className="meta-item">🏷️ {product.categories}</span>
+                                    )}
+                                </div>
+                            </div>
+                        </div>
+
+                        {/* Allergy Warning - Enhanced */}
+                        {allergyWarning && allergyMatches.length > 0 && (
+                            <div className="allergy-alert alert-error">
+                                <div className="alert-header">
+                                    <span className="alert-icon">⚠️ ALLERGEN WARNING</span>
+                                </div>
+                                <div className="alert-content">
+                                    <p>This product contains:</p>
+                                    <div className="allergen-badges">
+                                        {allergyMatches.map(allergen => (
+                                            <span key={allergen} className="allergen-badge">
+                                                {allergen}
+                                            </span>
+                                        ))}
+                                    </div>
+                                </div>
+                            </div>
+                        )}
+
+                        {/* Nutrition Section */}
+                        {product?.nutrition && (
+                            <div className="nutrition-section">
+                                <h3 className="section-title">Nutrition Facts (per 100g)</h3>
+                                <div className="nutrition-grid">
+                                    <div className="nutrition-item">
+                                        <span className="nutrition-label">Calories</span>
+                                        <span className="nutrition-value">
+                                            {product.nutrition.calories} kcal
+                                        </span>
+                                    </div>
+                                    <div className="nutrition-item">
+                                        <span className="nutrition-label">Protein</span>
+                                        <span className="nutrition-value">
+                                            {product.nutrition.protein || 'N/A'} g
+                                        </span>
+                                    </div>
+                                    <div className="nutrition-item">
+                                        <span className="nutrition-label">Fat</span>
+                                        <span className="nutrition-value">
+                                            {product.nutrition.fat || 'N/A'} g
+                                        </span>
+                                    </div>
+                                    <div className="nutrition-item">
+                                        <span className="nutrition-label">Carbs</span>
+                                        <span className="nutrition-value">
+                                            {product.nutrition.carbs || 'N/A'} g
+                                        </span>
+                                    </div>
+                                    <div className="nutrition-item">
+                                        <span className="nutrition-label">Sugar</span>
+                                        <span className="nutrition-value">
+                                            {product.nutrition.sugar || 'N/A'} g
+                                        </span>
+                                    </div>
+                                    <div className="nutrition-item">
+                                        <span className="nutrition-label">Fiber</span>
+                                        <span className="nutrition-value">
+                                            {product.nutrition.fiber || 'N/A'} g
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+                        )}
+
+                        {/* Ingredients Section */}
+                        {product?.ingredients && (
+                            <div className="ingredients-section">
+                                <div className="ingredients-header">
+                                    <h3 className="section-title">Ingredients</h3>
+                                    <button
+                                        onClick={handleTranslate}
+                                        className="btn btn-secondary btn-sm"
+                                        disabled={translating}
+                                    >
+                                        {translating ? 'Translating...' : '🌐 Translate'}
+                                    </button>
+                                </div>
+                                <div className="ingredients-text">
+                                    {translatedIngredients || product.ingredients}
+                                </div>
+                            </div>
+                        )}
+
+                        {/* Allergens Section */}
+                        {product?.allergens && product.allergens.length > 0 && (
+                            <div className="allergens-section">
+                                <h3 className="section-title">Declared Allergens</h3>
+                                <div className="allergen-tags">
+                                    {product.allergens.map((allergen, index) => (
+                                        <span key={index} className="allergen-tag">
+                                            {allergen.replace('en:', '')}
+                                        </span>
+                                    ))}
+                                </div>
+                            </div>
+                        )}
+
+                        {/* Similar Products */}
+                        {similar && similar.length > 0 && (
+                            <div className="similar-section">
+                                <h3 className="section-title">Similar Products</h3>
+                                <div className="similar-grid">
+                                    {similar.map((item, index) => (
+                                        <div
+                                            key={index}
+                                            className="similar-card"
+                                            onClick={() => navigate(`/product/${item.barcode}`)}
+                                        >
+                                            {item.image && (
+                                                <img src={item.image} alt={item.name} />
+                                            )}
+                                            <h4>{item.name}</h4>
+                                            <p>{item.brand}</p>
+                                            <small>{item.nutrition?.calories || 'N/A'} kcal/100g</small>
+                                        </div>
+                                    ))}
+                                </div>
+                            </div>
+                        )}
+
+                        {/* Reviews Section */}
+                        {product && (
+                            <div className="reviews-section">
+                                <h3 className="section-title">Customer Reviews</h3>
+                                <div className="review-placeholder">
+                                    <p>⭐⭐⭐⭐☆ 4.2 / 5.0</p>
+                                    <p className="review-text">"Great product! Good value for money." - Demo User</p>
+                                    <p className="review-text">"Tastes amazing, would buy again!" - Another User</p>
+                                    <small>Reviews feature coming soon...</small>
+                                </div>
+                            </div>
+                        )}
                     </div>
                 </div>
 
-                <div className="product-details">
-                    <div className="nutrition-section">
-                        <h3>Nutrition Facts (per 100g)</h3>
-                        <div className="nutrition-grid">
-                            <div className="nutrition-item">
-                                <span className="label">Calories</span>
-                                <span className="value">{product.nutrition.calories} kcal</span>
+                {/* Right Column - Sidebar */}
+                <div className="product-sidebar">
+                    {/* Quick Info Card */}
+                    <div className="product-card glass-card sidebar-card">
+                        <h3 className="section-title">Quick Info</h3>
+                        <div className="quick-info">
+                            <div className="info-row">
+                                <span className="info-label">Category</span>
+                                <span className="info-value">{product?.categories || 'Not specified'}</span>
                             </div>
-                            <div className="nutrition-item">
-                                <span className="label">Fat</span>
-                                <span className="value">{product.nutrition.fat}g</span>
+                            <div className="info-row">
+                                <span className="info-label">Brand</span>
+                                <span className="info-value">{product?.brand || 'Unknown'}</span>
                             </div>
-                            <div className="nutrition-item">
-                                <span className="label">Carbs</span>
-                                <span className="value">{product.nutrition.carbs}g</span>
+                            <div className="info-row">
+                                <span className="info-label">Barcode</span>
+                                <span className="info-value">{product?.barcode}</span>
                             </div>
-                            <div className="nutrition-item">
-                                <span className="label">Protein</span>
-                                <span className="value">{product.nutrition.protein}g</span>
-                            </div>
-                            <div className="nutrition-item">
-                                <span className="label">Sugar</span>
-                                <span className="value">{product.nutrition.sugar}g</span>
-                            </div>
-                            <div className="nutrition-item">
-                                <span className="label">Fiber</span>
-                                <span className="value">{product.nutrition.fiber}g</span>
-                            </div>
+                            {product?.nutrition && (
+                                <div className="info-row">
+                                    <span className="info-label">Energy</span>
+                                    <span className="info-value">{product.nutrition.calories} kcal/100g</span>
+                                </div>
+                            )}
                         </div>
                     </div>
 
-                    <div className="ingredients-section">
-                        <div className="section-header">
-                            <h3>Ingredients</h3>
-                            <button onClick={handleTranslate} className="btn-translate" disabled={translating}>
-                                {translating ? 'Translating...' : '🌐 Translate'}
-                            </button>
-                        </div>
-                        <p className="ingredients-text">
-                            {translatedIngredients || product.ingredients || 'No ingredients available'}
-                        </p>
-                    </div>
-
-                    {product.allergens && product.allergens.length > 0 && (
-                        <div className="allergens-section">
-                            <h3>Allergens</h3>
-                            <div className="allergen-tags">
-                                {product.allergens.map((allergen, index) => (
-                                    <span key={index} className="allergen-tag">
-                                        {allergen.replace('en:', '')}
-                                    </span>
-                                ))}
-                            </div>
-                        </div>
-                    )}
-
-                    {similar && similar.length > 0 && (
-                        <div className="similar-section">
-                            <h3>Similar Products</h3>
-                            <div className="similar-grid">
-                                {similar.map((item, index) => (
-                                    <div
-                                        key={index}
-                                        className="similar-card"
-                                        onClick={() => navigate(`/product/${item.barcode}`)}
-                                    >
-                                        {item.image && (
-                                            <img src={item.image} alt={item.name} />
-                                        )}
-                                        <h4>{item.name}</h4>
-                                        <p>{item.brand}</p>
-                                        <small>{item.nutrition.calories} kcal/100g</small>
+                    {/* Health Benefits Card */}
+                    <div className="product-card glass-card sidebar-card">
+                        <h3 className="section-title">Health Info</h3>
+                        <div className="health-info">
+                            {allergyWarning ? (
+                                <div className="health-item warning">
+                                    <div className="health-icon">⚠️</div>
+                                    <div className="health-text">
+                                        <h4>Contains Allergen</h4>
+                                        <p>This product contains {allergyMatches.join(', ')}</p>
                                     </div>
-                                ))}
-                            </div>
+                                </div>
+                            ) : (
+                                <div className="health-item safe">
+                                    <div className="health-icon">✅</div>
+                                    <div className="health-text">
+                                        <h4>Safe for You</h4>
+                                        <p>No detected allergens</p>
+                                    </div>
+                                </div>
+                            )}
                         </div>
-                    )}
+                    </div>
 
-                    <div className="reviews-section">
-                        <h3>Customer Reviews</h3>
-                        <div className="review-placeholder">
-                            <p>⭐⭐⭐⭐☆ 4.2 / 5.0</p>
-                            <p className="review-text">"Great product! Good value for money." - Demo User</p>
-                            <p className="review-text">"Tastes amazing, would buy again!" - Another User</p>
-                            <small>Reviews feature coming soon...</small>
-                        </div>
+                    {/* Action Card */}
+                    <div className="product-card glass-card sidebar-card action-card">
+                        <h3 className="section-title">Actions</h3>
+                        <button className="btn btn-primary btn-block">
+                            ⭐ Save Product
+                        </button>
+                        <button
+                            className="btn btn-secondary btn-block"
+                            onClick={() => navigate('/scanner')}
+                        >
+                            📸 Scan Another
+                        </button>
                     </div>
                 </div>
             </div>

@@ -1,162 +1,452 @@
-.scanner-container {
-    min-height: 100vh;
-    background: #f5f7fa;
-}
+/* ============================================
+   SCANNER CONTAINER & LAYOUT
+   ============================================ */
 
-.scanner-nav {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    color: white;
-    padding: 20px 40px;
-    display: flex;
-    align-items: center;
-    gap: 20px;
+.scanner-container {
+    position: relative;
+    min-height: 100vh;
+    background: #0a0e27;
+    padding: 40px 20px;
+    overflow-x: hidden;
 }
 
 .btn-back {
-    background: rgba(255, 255, 255, 0.2);
-    color: white;
-    border: 1px solid white;
-    padding: 8px 20px;
-    border-radius: 5px;
+    position: absolute;
+    top: 30px;
+    left: 40px;
+    background: rgba(160, 153, 216, 0.2);
+    border: 1px solid rgba(160, 153, 216, 0.4);
+    color: #a099d8;
+    padding: 10px 20px;
+    border-radius: 8px;
     cursor: pointer;
+    font-size: 14px;
     font-weight: 500;
-    transition: all 0.3s;
+    transition: all 0.3s ease;
+    z-index: 10;
 }
 
 .btn-back:hover {
-    background: white;
-    color: #667eea;
-}
-
-.scanner-nav h2 {
-    margin: 0;
-    font-size: 24px;
+    background: rgba(160, 153, 216, 0.3);
+    border-color: #a099d8;
+    transform: translateX(-5px);
 }
 
 .scanner-content {
-    max-width: 800px;
+    max-width: 1200px;
     margin: 0 auto;
-    padding: 40px 20px;
+    display: grid;
+    grid-template-columns: 1fr 350px;
+    gap: 30px;
+    padding-top: 40px;
 }
 
-.scanner-box {
-    background: white;
+/* ============================================
+   GLASS CARD STYLE
+   ============================================ */
+
+.glass-card {
+    background: rgba(16, 20, 43, 0.7);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border: 1px solid rgba(160, 153, 216, 0.2);
+    border-radius: 16px;
     padding: 40px;
-    border-radius: 10px;
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
-    margin-bottom: 30px;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+    transition: all 0.3s ease;
 }
 
-.camera-placeholder {
+.glass-card:hover {
+    border-color: rgba(160, 153, 216, 0.4);
+    box-shadow: 0 12px 48px rgba(160, 153, 216, 0.2);
+}
+
+/* ============================================
+   SCANNER HEADER
+   ============================================ */
+
+.scanner-header {
     text-align: center;
-    padding: 60px 20px;
-    border: 2px dashed #ddd;
-    border-radius: 10px;
-    background: #fafafa;
+    margin-bottom: 40px;
+    border-bottom: 1px solid rgba(160, 153, 216, 0.2);
+    padding-bottom: 30px;
+}
+
+.scanner-header h1 {
+    color: #ffffff;
+    font-size: 32px;
+    margin: 0 0 10px 0;
+    text-shadow: 0 2px 10px rgba(0, 0, 0, 0.5);
+}
+
+.scanner-header p {
+    color: #c0b9c0;
+    font-size: 16px;
+    margin: 0;
+}
+
+/* ============================================
+   SCANNER PLACEHOLDER
+   ============================================ */
+
+.scanner-placeholder {
+    background: linear-gradient(135deg, rgba(160, 153, 216, 0.1), rgba(207, 48, 170, 0.1));
+    border: 2px dashed rgba(160, 153, 216, 0.3);
+    border-radius: 12px;
+    padding: 60px 40px;
+    text-align: center;
+    margin-bottom: 40px;
+    transition: all 0.3s ease;
+}
+
+.scanner-placeholder:hover {
+    border-color: rgba(160, 153, 216, 0.5);
+    background: linear-gradient(135deg, rgba(160, 153, 216, 0.15), rgba(207, 48, 170, 0.15));
 }
 
 .camera-icon {
-    font-size: 80px;
+    font-size: 60px;
     margin-bottom: 20px;
+    animation: pulse 2s infinite;
 }
 
-.camera-placeholder p {
+.scanner-status {
+    color: #ffffff;
     font-size: 18px;
-    color: #666;
+    font-weight: 600;
     margin: 0 0 10px 0;
+    text-shadow: 0 2px 10px rgba(0, 0, 0, 0.5);
 }
 
-.camera-placeholder small {
-    color: #999;
+.scanner-note {
+    color: #c0b9c0;
+    font-size: 14px;
 }
 
-.manual-entry {
-    background: white;
-    padding: 30px;
+@keyframes pulse {
+
+    0%,
+    100% {
+        transform: scale(1);
+    }
+
+    50% {
+        transform: scale(1.1);
+    }
+}
+
+/* ============================================
+   ALERT MESSAGES
+   ============================================ */
+
+.alert {
+    padding: 16px 20px;
     border-radius: 10px;
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
-    margin-bottom: 30px;
-}
-
-.manual-entry h3 {
-    margin: 0 0 20px 0;
-    color: #333;
-}
-
-.manual-entry form {
     display: flex;
-    gap: 10px;
-    margin-bottom: 20px;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 30px;
+    font-weight: 500;
+    animation: slideIn 0.3s ease;
 }
 
-.barcode-input {
-    flex: 1;
-    padding: 12px;
-    border: 1px solid #ddd;
-    border-radius: 5px;
+@keyframes slideIn {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.alert-error {
+    background: rgba(239, 68, 68, 0.15);
+    border: 1px solid rgba(239, 68, 68, 0.3);
+    color: #fca5a5;
+}
+
+.alert-success {
+    background: rgba(34, 197, 94, 0.15);
+    border: 1px solid rgba(34, 197, 94, 0.3);
+    color: #86efac;
+}
+
+.alert-icon {
+    font-size: 18px;
+}
+
+.alert p {
+    margin: 0;
+}
+
+/* ============================================
+   FORM STYLES
+   ============================================ */
+
+.scanner-form {
+    margin-bottom: 40px;
+}
+
+.form-group {
+    margin-bottom: 25px;
+}
+
+.form-label {
+    display: block;
+    color: #a099d8;
+    font-size: 14px;
+    font-weight: 600;
+    margin-bottom: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.form-input {
+    width: 100%;
+    padding: 14px 16px;
+    background: rgba(160, 153, 216, 0.1);
+    border: 1px solid rgba(160, 153, 216, 0.3);
+    border-radius: 10px;
+    color: #ffffff;
+    font-size: 16px;
+    transition: all 0.3s ease;
+    box-sizing: border-box;
+}
+
+.form-input::placeholder {
+    color: #8078a8;
+}
+
+.form-input:focus {
+    outline: none;
+    background: rgba(160, 153, 216, 0.15);
+    border-color: #a099d8;
+    box-shadow: 0 0 0 3px rgba(160, 153, 216, 0.1);
+}
+
+.form-input:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+/* ============================================
+   BUTTON STYLES
+   ============================================ */
+
+.button-group {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 15px;
+}
+
+.btn {
+    padding: 14px 24px;
+    border: none;
+    border-radius: 10px;
+    font-size: 15px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.btn-lg {
+    padding: 16px 28px;
     font-size: 16px;
 }
 
-.barcode-input:focus {
-    outline: none;
-    border-color: #667eea;
-}
-
-.quick-test {
-    text-align: center;
-    padding-top: 20px;
-    border-top: 1px solid #eee;
-}
-
-.quick-test p {
-    color: #666;
-    margin: 0 0 10px 0;
-}
-
-.btn-test {
-    background: #f0f0f0;
-    color: #667eea;
-    border: 1px solid #667eea;
-    padding: 10px 20px;
-    border-radius: 5px;
-    cursor: pointer;
-    font-weight: 500;
-    transition: all 0.3s;
-}
-
-.btn-test:hover {
-    background: #667eea;
+.btn-primary {
+    background: linear-gradient(135deg, #a099d8 0%, #cf30aa 100%);
     color: white;
+    box-shadow: 0 4px 15px rgba(160, 153, 216, 0.4);
 }
 
-.scanner-tips {
-    background: white;
-    padding: 30px;
-    border-radius: 10px;
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+.btn-primary:hover:not(:disabled) {
+    transform: translateY(-3px);
+    box-shadow: 0 6px 25px rgba(160, 153, 216, 0.6);
 }
 
-.scanner-tips h4 {
+.btn-primary:active:not(:disabled) {
+    transform: translateY(-1px);
+}
+
+.btn-secondary {
+    background: rgba(160, 153, 216, 0.2);
+    color: #a099d8;
+    border: 1px solid rgba(160, 153, 216, 0.4);
+}
+
+.btn-secondary:hover:not(:disabled) {
+    background: rgba(160, 153, 216, 0.3);
+    border-color: #a099d8;
+    transform: translateY(-3px);
+}
+
+.btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+/* ============================================
+   SCANNER INFO SECTION
+   ============================================ */
+
+.scanner-info {
+    background: rgba(160, 153, 216, 0.08);
+    border: 1px solid rgba(160, 153, 216, 0.2);
+    border-radius: 12px;
+    padding: 25px;
+    margin-top: 30px;
+}
+
+.info-title {
+    color: #a099d8;
+    font-size: 14px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
     margin: 0 0 15px 0;
-    color: #333;
+    font-weight: 600;
 }
 
-.scanner-tips ul {
+.info-list {
+    list-style: none;
+    padding: 0;
     margin: 0;
-    padding-left: 20px;
-    color: #666;
 }
 
-.scanner-tips li {
-    margin-bottom: 8px;
+.info-list li {
+    color: #c0b9c0;
+    padding: 8px 0;
+    font-size: 14px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
 }
 
-@media (max-width: 768px) {
-    .scanner-nav {
-        padding: 15px 20px;
+.info-list li:before {
+    content: '✓';
+    color: #22c55e;
+    font-weight: bold;
+}
+
+/* ============================================
+   SIDEBAR STYLES
+   ============================================ */
+
+.scanner-sidebar {
+    position: sticky;
+    top: 80px;
+    height: fit-content;
+}
+
+.sidebar-content {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.sidebar-title {
+    color: #ffffff;
+    font-size: 18px;
+    margin: 0 0 10px 0;
+    text-shadow: 0 2px 10px rgba(0, 0, 0, 0.5);
+}
+
+.feature-item {
+    display: flex;
+    gap: 12px;
+    padding: 12px;
+    border-radius: 8px;
+    background: rgba(160, 153, 216, 0.05);
+    transition: all 0.3s ease;
+}
+
+.feature-item:hover {
+    background: rgba(160, 153, 216, 0.1);
+    transform: translateX(5px);
+}
+
+.feature-icon {
+    font-size: 28px;
+    flex-shrink: 0;
+}
+
+.feature-text h4 {
+    color: #a099d8;
+    font-size: 13px;
+    margin: 0 0 3px 0;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.3px;
+}
+
+.feature-text p {
+    color: #8078a8;
+    font-size: 12px;
+    margin: 0;
+    line-height: 1.4;
+}
+
+/* ============================================
+   RESPONSIVE DESIGN
+   ============================================ */
+
+@media (max-width: 900px) {
+    .scanner-content {
+        grid-template-columns: 1fr;
     }
 
-    .manual-entry form {
-        flex-direction: column;
+    .button-group {
+        grid-template-columns: 1fr;
+    }
+
+    .scanner-sidebar {
+        position: static;
+    }
+
+    .glass-card {
+        padding: 30px;
+    }
+}
+
+@media (max-width: 600px) {
+    .scanner-container {
+        padding: 20px 15px;
+    }
+
+    .btn-back {
+        top: 15px;
+        left: 15px;
+        right: 15px;
+        width: calc(100% - 30px);
+        text-align: center;
+    }
+
+    .scanner-content {
+        padding-top: 70px;
+    }
+
+    .glass-card {
+        padding: 20px;
+    }
+
+    .scanner-header h1 {
+        font-size: 24px;
+    }
+
+    .scanner-placeholder {
+        padding: 40px 20px;
+    }
+
+    .camera-icon {
+        font-size: 45px;
+    }
+
+    .button-group {
+        grid-template-columns: 1fr;
     }
 }

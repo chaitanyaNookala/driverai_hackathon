@@ -1,7 +1,9 @@
 import { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { login } from '../services/api';
+import GlowingInput from '../components/GlowingInput';
 import './Auth.css';
+import Spline from '@splinetool/react-spline';
 
 function Login({ onLogin }) {
     const navigate = useNavigate();
@@ -36,46 +38,93 @@ function Login({ onLogin }) {
     };
 
     return (
-        <div className="auth-container">
-            <div className="auth-box">
-                <h1>Welcome Back</h1>
-                <p className="subtitle">Login to DriverAI Nutrition Scanner</p>
+        <div className="auth-container-new">
+            {/* LEFT SIDE - Spline Animation */}
+            <div className="auth-visual">
+                <Spline
+                    scene="https://prod.spline.design/aDfp7bALkuovClH6/scene.splinecode"
+                />
+            </div>
 
-                {error && <div className="error-message">{error}</div>}
-
-                <form onSubmit={handleSubmit}>
-                    <div className="form-group">
-                        <label>Email</label>
-                        <input
-                            type="email"
-                            name="email"
-                            value={formData.email}
-                            onChange={handleChange}
-                            required
-                            placeholder="your@email.com"
-                        />
+            {/* RIGHT SIDE - Login Form */}
+            <div className="auth-form-section">
+                <div className="auth-form-container">
+                    <div className="auth-header">
+                        <h2>Welcome Back</h2>
+                        <p>Login to continue your health journey</p>
                     </div>
 
-                    <div className="form-group">
-                        <label>Password</label>
-                        <input
-                            type="password"
-                            name="password"
-                            value={formData.password}
-                            onChange={handleChange}
-                            required
-                            placeholder="Your password"
-                        />
+                    {error && (
+                        <div className="error-message">
+                            <span className="error-icon">⚠️</span>
+                            {error}
+                        </div>
+                    )}
+
+                    <form onSubmit={handleSubmit} className="auth-form">
+                        <div className="form-group-new">
+                            <label htmlFor="email">Email Address</label>
+                            <GlowingInput
+                                id="email"
+                                type="email"
+                                name="email"
+                                value={formData.email}
+                                onChange={handleChange}
+                                placeholder="you@example.com"
+                                required
+                                autoComplete="email"
+                            />
+                        </div>
+
+                        <div className="form-group-new">
+                            <label htmlFor="password">Password</label>
+                            <GlowingInput
+                                id="password"
+                                type="password"
+                                name="password"
+                                value={formData.password}
+                                onChange={handleChange}
+                                placeholder="••••••••"
+                                required
+                                autoComplete="current-password"
+                            />
+                        </div>
+
+                        <button
+                            type="submit"
+                            className="btn-primary-new"
+                            disabled={loading}
+                        >
+                            {loading ? (
+                                <span className="btn-loading">
+                                    <span className="spinner"></span>
+                                    Logging in...
+                                </span>
+                            ) : (
+                                'Login'
+                            )}
+                        </button>
+                    </form>
+
+                    <div className="auth-footer-new">
+                        <p>Don't have an account? <Link to="/signup">Sign Up</Link></p>
                     </div>
 
-                    <button type="submit" className="btn-primary" disabled={loading}>
-                        {loading ? 'Logging in...' : 'Login'}
-                    </button>
-                </form>
-
-                <p className="auth-footer">
-                    Don't have an account? <Link to="/signup">Sign Up</Link>
-                </p>
+                    <div className="auth-features">
+                        <div className="feature-item">
+                            <span className="feature-icon">🔍</span>
+                            <span>Product Scanning</span>
+                        </div>
+                        <div className="feature-item">
+                            <span className="feature-icon">⚡</span>
+                            <span>Instant Analysis</span>
+                        </div>
+                        <div className="feature-item">
+                            <span className="feature-icon">🛡️</span>
+                            <span>Allergy Protection</span>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
     );

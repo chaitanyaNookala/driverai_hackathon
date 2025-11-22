@@ -7,9 +7,20 @@ const jwt = require('jsonwebtoken');
 const users = [];
 
 // Signup
+// Signup
 router.post('/signup', async (req, res) => {
     try {
-        const { email, password, allergies, height, weight } = req.body;
+        const {
+            email,
+            password,
+            age,
+            address,
+            height,
+            weight,
+            allergies,
+            healthIssues,
+            dietaryPreferences
+        } = req.body;
 
         // Check if user exists
         if (users.find(u => u.email === email)) {
@@ -24,9 +35,13 @@ router.post('/signup', async (req, res) => {
             id: Date.now().toString(),
             email,
             password: hashedPassword,
-            allergies: allergies || [],
+            age: age || null,
+            address: address || {},
             height: height || null,
             weight: weight || null,
+            allergies: allergies || [],
+            healthIssues: healthIssues || [],
+            dietaryPreferences: dietaryPreferences || [],
             createdAt: new Date().toISOString()
         };
 
@@ -45,9 +60,13 @@ router.post('/signup', async (req, res) => {
             user: {
                 id: user.id,
                 email: user.email,
-                allergies: user.allergies,
+                age: user.age,
+                address: user.address,
                 height: user.height,
-                weight: user.weight
+                weight: user.weight,
+                allergies: user.allergies,
+                healthIssues: user.healthIssues,
+                dietaryPreferences: user.dietaryPreferences
             }
         });
     } catch (error) {
