@@ -3,13 +3,13 @@ const router = express.Router();
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 
-// In-memory user storage (for hackathon - replace with real DB later)
-const users = [];
-
-// Signup
-// Signup
+// ============================================
+// SIGNUP - Store user in Firebase Firestore
+// ============================================
 router.post('/signup', async (req, res) => {
     try {
+        const db = req.db;
+
         const {
             email,
             password,
@@ -22,17 +22,26 @@ router.post('/signup', async (req, res) => {
             dietaryPreferences
         } = req.body;
 
+        // Validate required fields
+        if (!email || !password) {
+            return res.status(400).json({ error: 'Email and password are required' });
+        }
+
         // Check if user exists
-        if (users.find(u => u.email === email)) {
+        const userSnapshot = await db.collection('users').where('email', '==', email).get();
+        if (!userSnapshot.empty) {
             return res.status(400).json({ error: 'User already exists' });
         }
 
         // Hash password
         const hashedPassword = await bcrypt.hash(password, 10);
 
-        // Create user
-        const user = {
-            id: Date.now().toString(),
+        // Create user document
+        const userRef = db.collection('users').doc();
+        const userId = userRef.id;
+
+        const userData = {
+            id: userId,
             email,
             password: hashedPassword,
             age: age || null,
@@ -45,98 +54,110 @@ router.post('/signup', async (req, res) => {
             createdAt: new Date().toISOString()
         };
 
-        users.push(user);
+        await userRef.set(userData);
 
-        // Create token
+        // Create JWT token
         const token = jwt.sign(
-            { id: user.id, email: user.email },
+            { id: userId, email: email },
             process.env.JWT_SECRET,
             { expiresIn: '7d' }
         );
 
+        // Return user data (without password)
+        const { password: _, ...userWithoutPassword } = userData;
+
         res.json({
             success: true,
             token,
-            user: {
-                id: user.id,
-                email: user.email,
-                age: user.age,
-                address: user.address,
-                height: user.height,
-                weight: user.weight,
-                allergies: user.allergies,
-                healthIssues: user.healthIssues,
-                dietaryPreferences: user.dietaryPreferences
-            }
+            user: userWithoutPassword
         });
+
     } catch (error) {
+        console.error('Signup error:', error);
         res.status(500).json({ error: error.message });
     }
 });
 
-// Login
+// ============================================
+// LOGIN - Fetch user from Firebase Firestore
+// ============================================
 router.post('/login', async (req, res) => {
     try {
+        const db = req.db;
         const { email, password } = req.body;
 
-        // Find user
-        const user = users.find(u => u.email === email);
-        if (!user) {
+        // Validate required fields
+        if (!email || !password) {
+            return res.status(400).json({ error: 'Email and password are required' });
+        }
+
+        // Find user in Firestore
+        const userSnapshot = await db.collection('users').where('email', '==', email).get();
+
+        if (userSnapshot.empty) {
             return res.status(400).json({ error: 'Invalid credentials' });
         }
 
-        // Check password
+        const userDoc = userSnapshot.docs[0];
+        const user = userDoc.data();
+
+        // Verify password
         const validPassword = await bcrypt.compare(password, user.password);
         if (!validPassword) {
             return res.status(400).json({ error: 'Invalid credentials' });
         }
 
-        // Create token
+        // Create JWT token
         const token = jwt.sign(
             { id: user.id, email: user.email },
             process.env.JWT_SECRET,
             { expiresIn: '7d' }
         );
 
+        // Return user data (without password)
+        const { password: _, ...userWithoutPassword } = user;
+
         res.json({
             success: true,
             token,
-            user: {
-                id: user.id,
-                email: user.email,
-                allergies: user.allergies,
-                height: user.height,
-                weight: user.weight
-            }
+            user: userWithoutPassword
         });
+
     } catch (error) {
+        console.error('Login error:', error);
         res.status(500).json({ error: error.message });
     }
 });
 
-// Get user profile (protected route)
+// ============================================
+// GET PROFILE - Protected route
+// ============================================
 router.get('/profile', async (req, res) => {
     try {
+        const db = req.db;
         const token = req.headers.authorization?.split(' ')[1];
+
         if (!token) {
             return res.status(401).json({ error: 'No token provided' });
         }
 
+        // Verify JWT token
         const decoded = jwt.verify(token, process.env.JWT_SECRET);
-        const user = users.find(u => u.id === decoded.id);
 
-        if (!user) {
+        // Fetch user from Firestore
+        const userDoc = await db.collection('users').doc(decoded.id).get();
+
+        if (!userDoc.exists) {
             return res.status(404).json({ error: 'User not found' });
         }
 
-        res.json({
-            id: user.id,
-            email: user.email,
-            allergies: user.allergies,
-            height: user.height,
-            weight: user.weight
-        });
+        const user = userDoc.data();
+        const { password: _, ...userWithoutPassword } = user;
+
+        res.json(userWithoutPassword);
+
     } catch (error) {
+        console.error('Profile error:', error);
         res.status(401).json({ error: 'Invalid token' });
     }
 });

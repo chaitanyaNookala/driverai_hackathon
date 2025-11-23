@@ -1,5 +1,6 @@
 from fastapi import FastAPI, UploadFile, File
 from fastapi.responses import JSONResponse
+from fastapi.middleware.cors import CORSMiddleware
 import pytesseract
 from PIL import Image, ImageEnhance, ImageOps, ImageFilter
 import google.generativeai as genai
@@ -7,6 +8,7 @@ import uvicorn
 import os
 import tempfile
 import logging
+
 
 # -------------------------------------------------------
 # LOGGING SETUP
@@ -18,17 +20,30 @@ logging.basicConfig(
 logger = logging.getLogger("backend")
 
 # -------------------------------------------------------
-# GEMINI API KEY
+# GEMINI API KEY - Using direct key temporarily
 # -------------------------------------------------------
-GEMINI_API_KEY = "AIzaSyCz-k2V7UxSceeHeuSl-sOlTgVLLB7vQqo"   # <–– PASTE IT HERE
+import os
+
+# TODO: Move to .env file once encoding issues are resolved
+GEMINI_API_KEY = "AIzaSyDeWdsf96jQgD5jdVf6c_JqoStwh35my-4"
 
 if not GEMINI_API_KEY or GEMINI_API_KEY.strip() == "":
-    raise ValueError("❌ ERROR: GEMINI_API_KEY missing! Add it in main.py.")
+    raise ValueError("❌ ERROR: GEMINI_API_KEY missing! Add it to .env file in python_backend folder.")
 
 genai.configure(api_key=GEMINI_API_KEY)
+logger.info("✅ Gemini API key configured")
 
 try:
-    model = genai.GenerativeModel("models/gemini-2.5-pro")
+    # Configure model with longer timeout
+    model = genai.GenerativeModel(
+        "models/gemini-2.0-flash-exp",
+        generation_config={
+            "temperature": 0.7,
+            "top_p": 0.95,
+            "top_k": 40,
+            "max_output_tokens": 8192,
+        }
+    )
     logger.info("✅ Gemini model initialized successfully")
 except Exception as e:
     logger.error(f"❌ Gemini model initialization failed: {e}")
@@ -49,6 +64,15 @@ else:
 # FASTAPI INSTANCE
 # -------------------------------------------------------
 app = FastAPI()
+
+# Add CORS middleware
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["http://localhost:5173", "http://localhost:3000"],  # React dev servers
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 
 # -------------------------------------------------------

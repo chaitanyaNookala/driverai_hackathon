@@ -67,9 +67,9 @@
 
 .scanner-header {
     text-align: center;
-    margin-bottom: 40px;
+    margin-bottom: 30px;
     border-bottom: 1px solid rgba(160, 153, 216, 0.2);
-    padding-bottom: 30px;
+    padding-bottom: 25px;
 }
 
 .scanner-header h1 {
@@ -86,6 +86,45 @@
 }
 
 /* ============================================
+   TAB NAVIGATION
+   ============================================ */
+
+.tab-navigation {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 30px;
+    border-bottom: 2px solid rgba(160, 153, 216, 0.2);
+    padding-bottom: 0;
+}
+
+.tab-btn {
+    padding: 12px 24px;
+    background: transparent;
+    border: none;
+    color: #c0b9c0;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    border-bottom: 3px solid transparent;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.tab-btn:hover {
+    color: #a099d8;
+}
+
+.tab-btn.active {
+    color: #a099d8;
+    border-bottom-color: #cf30aa;
+}
+
+.tab-content {
+    display: contents;
+}
+
+/* ============================================
    SCANNER PLACEHOLDER
    ============================================ */
 
@@ -93,9 +132,9 @@
     background: linear-gradient(135deg, rgba(160, 153, 216, 0.1), rgba(207, 48, 170, 0.1));
     border: 2px dashed rgba(160, 153, 216, 0.3);
     border-radius: 12px;
-    padding: 60px 40px;
+    padding: 50px 40px;
     text-align: center;
-    margin-bottom: 40px;
+    margin-bottom: 30px;
     transition: all 0.3s ease;
 }
 
@@ -113,23 +152,14 @@
 .scanner-status {
     color: #ffffff;
     font-size: 18px;
-<<<<<<< HEAD
     font-weight: 600;
-=======
-    color: black;
->>>>>>> a718d7bf7b00594b6b333eb1f0e6117c60615425
     margin: 0 0 10px 0;
     text-shadow: 0 2px 10px rgba(0, 0, 0, 0.5);
 }
 
-<<<<<<< HEAD
 .scanner-note {
     color: #c0b9c0;
     font-size: 14px;
-=======
-.camera-placeholder small {
-    color: black;
->>>>>>> a718d7bf7b00594b6b333eb1f0e6117c60615425
 }
 
 @keyframes pulse {
@@ -151,19 +181,6 @@
 .alert {
     padding: 16px 20px;
     border-radius: 10px;
-<<<<<<< HEAD
-=======
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
-    margin-bottom: 30px;
-}
-
-.manual-entry h3 {
-    margin: 0 0 20px 0;
-    color: black;
-}
-
-.manual-entry form {
->>>>>>> a718d7bf7b00594b6b333eb1f0e6117c60615425
     display: flex;
     align-items: center;
     gap: 12px;
@@ -202,14 +219,16 @@
 
 .alert p {
     margin: 0;
+    font-size: 14px;
 }
 
 /* ============================================
    FORM STYLES
    ============================================ */
 
-.scanner-form {
-    margin-bottom: 40px;
+.scanner-form,
+.ai-scanner-form {
+    margin-bottom: 30px;
 }
 
 .form-group {
@@ -255,6 +274,47 @@
 }
 
 /* ============================================
+   FILE INPUT STYLES
+   ============================================ */
+
+.file-input-wrapper {
+    position: relative;
+    display: block;
+}
+
+.file-input {
+    display: none;
+}
+
+.file-input-label {
+    display: block;
+    padding: 14px 16px;
+    background: rgba(160, 153, 216, 0.1);
+    border: 2px dashed rgba(160, 153, 216, 0.3);
+    border-radius: 10px;
+    color: #a099d8;
+    font-size: 14px;
+    font-weight: 600;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.file-input-label:hover {
+    background: rgba(160, 153, 216, 0.15);
+    border-color: #a099d8;
+    color: #cf30aa;
+}
+
+.file-input:focus+.file-input-label {
+    background: rgba(160, 153, 216, 0.15);
+    border-color: #a099d8;
+    box-shadow: 0 0 0 3px rgba(160, 153, 216, 0.1);
+}
+
+/* ============================================
    BUTTON STYLES
    ============================================ */
 
@@ -281,40 +341,8 @@
     font-size: 16px;
 }
 
-<<<<<<< HEAD
 .btn-primary {
     background: linear-gradient(135deg, #a099d8 0%, #cf30aa 100%);
-=======
-.barcode-input:focus {
-    outline: none;
-    border-color: #667eea;
-}
-
-.quick-test {
-    text-align: center;
-    padding-top: 20px;
-    border-top: 1px solid #eee;
-}
-
-.quick-test p {
-    color: black;
-    margin: 0 0 10px 0;
-}
-
-.btn-test {
-    background: #f0f0f0;
-    color: #667eea;
-    border: 1px solid #667eea;
-    padding: 10px 20px;
-    border-radius: 5px;
-    cursor: pointer;
-    font-weight: 500;
-    transition: all 0.3s;
-}
-
-.btn-test:hover {
-    background: #667eea;
->>>>>>> a718d7bf7b00594b6b333eb1f0e6117c60615425
     color: white;
     box-shadow: 0 4px 15px rgba(160, 153, 216, 0.4);
 }
@@ -346,6 +374,119 @@
 }
 
 /* ============================================
+   LOADING STATE
+   ============================================ */
+
+.loading-box {
+    background: rgba(160, 153, 216, 0.08);
+    border: 1px solid rgba(160, 153, 216, 0.2);
+    border-radius: 12px;
+    padding: 40px;
+    text-align: center;
+    margin-bottom: 30px;
+}
+
+.spinner {
+    width: 50px;
+    height: 50px;
+    border: 4px solid rgba(160, 153, 216, 0.2);
+    border-top: 4px solid #a099d8;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+    margin: 0 auto 20px;
+}
+
+@keyframes spin {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+.loading-box p {
+    color: #ffffff;
+    font-size: 16px;
+    margin: 10px 0 5px 0;
+    font-weight: 600;
+}
+
+.loading-box small {
+    color: #c0b9c0;
+    font-size: 13px;
+}
+
+/* ============================================
+   ANALYSIS RESULTS
+   ============================================ */
+
+.analysis-results {
+    background: rgba(160, 153, 216, 0.08);
+    border: 1px solid rgba(160, 153, 216, 0.2);
+    border-radius: 12px;
+    padding: 30px;
+    margin-bottom: 30px;
+    animation: slideIn 0.3s ease;
+}
+
+.result-section {
+    margin-bottom: 25px;
+}
+
+.result-section:last-child {
+    margin-bottom: 0;
+}
+
+.result-section h3 {
+    color: #a099d8;
+    font-size: 16px;
+    margin: 0 0 15px 0;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.result-content {
+    background: rgba(16, 20, 43, 0.5);
+    border: 1px solid rgba(160, 153, 216, 0.2);
+    border-radius: 8px;
+    padding: 15px;
+    color: #c0b9c0;
+    font-size: 13px;
+    line-height: 1.6;
+    max-height: 400px;
+    overflow-y: auto;
+    white-space: pre-wrap;
+    word-break: break-word;
+}
+
+.ocr-text {
+    background: rgba(239, 68, 68, 0.05);
+    border-color: rgba(239, 68, 68, 0.2);
+}
+
+.analysis-text {
+    background: rgba(34, 197, 94, 0.05);
+    border-color: rgba(34, 197, 94, 0.2);
+}
+
+.result-content::-webkit-scrollbar {
+    width: 8px;
+}
+
+.result-content::-webkit-scrollbar-track {
+    background: rgba(160, 153, 216, 0.1);
+    border-radius: 4px;
+}
+
+.result-content::-webkit-scrollbar-thumb {
+    background: rgba(160, 153, 216, 0.3);
+    border-radius: 4px;
+}
+
+.result-content::-webkit-scrollbar-thumb:hover {
+    background: rgba(160, 153, 216, 0.5);
+}
+
+/* ============================================
    SCANNER INFO SECTION
    ============================================ */
 
@@ -363,22 +504,13 @@
     text-transform: uppercase;
     letter-spacing: 0.5px;
     margin: 0 0 15px 0;
-<<<<<<< HEAD
     font-weight: 600;
-=======
-    color: black;
->>>>>>> a718d7bf7b00594b6b333eb1f0e6117c60615425
 }
 
 .info-list {
     list-style: none;
     padding: 0;
     margin: 0;
-<<<<<<< HEAD
-=======
-    padding-left: 20px;
-    color: black;
->>>>>>> a718d7bf7b00594b6b333eb1f0e6117c60615425
 }
 
 .info-list li {
@@ -390,11 +522,11 @@
     gap: 10px;
 }
 
-<<<<<<< HEAD
 .info-list li:before {
     content: '✓';
     color: #22c55e;
     font-weight: bold;
+    flex-shrink: 0;
 }
 
 /* ============================================
@@ -462,37 +594,6 @@
 @media (max-width: 900px) {
     .scanner-content {
         grid-template-columns: 1fr;
-=======
-/* ==== AI Analysis Output Styling ==== */
-.analysis-box {
-    margin-top: 25px;
-    padding: 25px;
-    background: #ffffff;
-    border-radius: 10px;
-    box-shadow: 0 1px 5px rgba(0, 0, 0, 0.1);
-    color: #222 !important;
-    text-align: left;
-}
-
-.analysis-box pre {
-    font-size: 16px;
-    color: #222 !important;
-    background: transparent;
-    white-space: pre-wrap;
-    line-height: 1.6;
-}
-
-.analysis-box h3 {
-    color: #111 !important;
-    margin-bottom: 15px;
-    font-size: 20px;
-    font-weight: 600;
-}
-
-@media (max-width: 768px) {
-    .scanner-nav {
-        padding: 15px 20px;
->>>>>>> a718d7bf7b00594b6b333eb1f0e6117c60615425
     }
 
     .button-group {
@@ -505,6 +606,10 @@
 
     .glass-card {
         padding: 30px;
+    }
+
+    .tab-navigation {
+        flex-wrap: wrap;
     }
 }
 
@@ -519,10 +624,11 @@
         right: 15px;
         width: calc(100% - 30px);
         text-align: center;
+        position: relative;
     }
 
     .scanner-content {
-        padding-top: 70px;
+        padding-top: 20px;
     }
 
     .glass-card {
@@ -543,5 +649,20 @@
 
     .button-group {
         grid-template-columns: 1fr;
+    }
+
+    .tab-navigation {
+        gap: 0;
+    }
+
+    .tab-btn {
+        flex: 1;
+        padding: 12px 12px;
+        font-size: 12px;
+    }
+
+    .result-content {
+        max-height: 300px;
+        font-size: 12px;
     }
 }

@@ -1,21 +1,3 @@
-import pytesseract
-from PIL import Image, ImageEnhance, ImageOps, ImageFilter
-import google.generativeai as genai
-
-
-
-
-# ---- YOUR GEMINI API KEY ----
-genai.configure(api_key="AIzaSyCz-k2V7UxSceeHeuSl-sOlTgVLLB7vQqo")
-
-
-model = genai.GenerativeModel("models/gemini-2.5-pro")  # Update with a model from your list
-
-# ---- TESSERACT PATH (VERY IMPORTANT) ----
-pytesseract.pytesseract.tesseract_cmd = r"C:\Program Files\Tesseract-OCR\tesseract.exe"
-
-# ---- LOAD PRODUCT IMAGE ----
-image_paths = ["image1.jpg", "image2.jpg"]
 all_text = ""
 
 for path in image_paths:

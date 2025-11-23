@@ -6,6 +6,7 @@ import Dashboard from './pages/Dashboard';
 import Scanner from './pages/Scanner';
 import ProductDetail from './pages/ProductDetail';
 import './App.css';
+import AIAnalysisResult from './pages/AIAnalysisResult';
 
 function App() {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
@@ -77,6 +78,16 @@ function App() {
             isAuthenticated ?
               <ProductDetail user={user} /> :
               <Navigate to="/login" />
+          }
+        />
+        <Route
+          path="/ai-analysis"
+          element={
+            isAuthenticated ? (
+              <AIAnalysisResult user={user} />
+            ) : (
+              <Navigate to="/login" />
+            )
           }
         />
         <Route path="/" element={<Navigate to="/login" />} />
